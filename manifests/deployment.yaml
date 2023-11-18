@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mosquitto
+  labels:
+    app: mosquitto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mosquitto
+  template:
+    metadata:
+      labels:
+        app: mosquitto
+    spec:
+      containers:
+        - name: mosquitto
+          image: eclipse-mosquitto:2.0.18
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 1883
+            - containerPort: 8883
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          securityContext:
+            privileged: false
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: mosquitto-password
+              mountPath: /mosquitto/config/mosquitto.password
+              subPath: mosquitto.password
+
+            - name: mosquitto-config
+              mountPath: /mosquitto/config/mosquitto.conf
+              subPath: mosquitto.conf
+
+            - name: mosquitto-persistent-storage
+              mountPath: /mosquitto/data
+
+            - name: mosquitto-server-cert
+              mountPath: /mosquitto/config/server.crt
+              subPath: server.crt
+
+            - name: mosquitto-server-key
+              mountPath: /mosquitto/config/server.key
+              subPath: server.key
+
+            - name: mosquitto-ca-cert
+              mountPath: /mosquitto/config/ca.crt
+              subPath: ca.crt
+
+      volumes:
+        - name: mosquitto-password
+          secret:
+            secretName: mosquitto-password
+
+        - name: mosquitto-config
+          configMap:
+            name: mosquitto-config
+
+        - name: mosquitto-persistent-storage
+          persistentVolumeClaim:
+            claimName: mosquitto-pvc
+
+        - name: mosquitto-server-cert
+          secret:
+            secretName: mosquitto-server-cert
+
+        - name: mosquitto-server-key
+          secret:
+            secretName: mosquitto-server-key
+
+        - name: mosquitto-ca-cert
+          secret:
+            secretName: mosquitto-ca-cert

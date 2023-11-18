@@ -1,0 +1,31 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: mosquitto
+
+resources:
+  - manifests/namespace.yaml
+  - manifests/pvc.yaml
+  - manifests/deployment.yaml
+  - manifests/services.yaml
+
+secretGenerator:
+  - name: mosquitto-password
+    files:
+      - configs/mosquitto.password
+
+  - name: mosquitto-server-cert
+    files:
+      - configs/server.crt
+
+  - name: mosquitto-server-key
+    files:
+      - configs/server.key
+
+  - name: mosquitto-ca-cert
+    files:
+      - configs/ca.crt
+
+configMapGenerator:
+  - name: mosquitto-config
+    files:
+      - configs/mosquitto.conf
