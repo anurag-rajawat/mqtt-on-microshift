@@ -3,8 +3,10 @@ kind: PersistentVolumeClaim
 metadata:
   name: mosquitto-pvc
 spec:
+  storageClassName: "topolvm-provisioner"
   accessModes:
     - ReadWriteOnce
+  volumeMode: Filesystem
   resources:
     requests:
       storage: "2Gi"
