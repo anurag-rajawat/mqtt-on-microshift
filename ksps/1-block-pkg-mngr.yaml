@@ -1,0 +1,21 @@
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: block-pkg-mngr
+  namespace: mosquitto
+spec:
+  severity: 5
+  selector:
+    matchLabels:
+      app: mosquitto
+  process:
+    matchPaths:
+      - path: /sbin/apk
+  action:
+    Block
+
+# When:
+# oc -n mosquitto exec -ti <mosquitto_pod> -- sh -c apk
+#
+# Result:
+# sh: apk: Permission denied

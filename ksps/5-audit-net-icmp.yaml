@@ -1,0 +1,26 @@
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: audit-net-icmp
+  namespace: mosquitto
+spec:
+  selector:
+    matchLabels:
+      app: mosquitto
+  network:
+    matchProtocols:
+      - protocol: icmp
+  action: Audit
+
+# When:
+# oc -n mosquitto exec -ti <mosquitto_pod> -- sh -c 'ping -c 1 127.0.0.1'
+#
+# Result:
+  # Output
+    # PING 127.0.0.1 (127.0.0.1): 56 data bytes
+    # 64 bytes from 127.0.0.1: seq=0 ttl=42 time=0.193 ms
+    #
+    # --- 127.0.0.1 ping statistics ---
+    # 1 packets transmitted, 1 packets received, 0% packet loss
+    # round-trip min/avg/max = 0.193/0.193/0.193 ms
+# Audit alerts

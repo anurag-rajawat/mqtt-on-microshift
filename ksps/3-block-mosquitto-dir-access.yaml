@@ -1,0 +1,21 @@
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: block-mosquitto-dir-access
+  namespace: mosquitto
+spec:
+  selector:
+    matchLabels:
+      app: mosquitto
+  file:
+    matchDirectories:
+      - dir: /mosquitto/
+        recursive: true
+  action:
+    Block
+
+# When
+# oc -n mosquitto exec -ti <mosquitto_pod> -- sh -c <ls/cat /mosquitto/**/*>'
+#
+# Result:
+# ls/cat: can't open '/mosquitto/**/*': Permission denied

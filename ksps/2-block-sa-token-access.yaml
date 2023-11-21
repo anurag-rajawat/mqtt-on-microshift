@@ -1,0 +1,22 @@
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: block-sa-token-access
+  namespace: mosquitto
+spec:
+  selector:
+    matchLabels:
+      app: mosquitto
+  file:
+    matchDirectories:
+      - dir: /containers/storage/overlay-containers/
+        recursive: true
+  action:
+    Block
+
+# When
+# oc -n mosquitto exec -ti <mosquitto_pod> -- sh -c 'cat /run/secrets/kubernetes.io/serviceaccount/token'
+#
+# Result:
+# cat: can't open '/run/secrets/kubernetes.io/serviceaccount/token': Permission denied
+#

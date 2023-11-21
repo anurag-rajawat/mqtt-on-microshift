@@ -1,0 +1,21 @@
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: block-mosquitto-clients
+  namespace: mosquitto
+spec:
+  selector:
+    matchLabels:
+      app: mosquitto
+  process:
+    matchPaths:
+      - path: /usr/bin/mosquitto_pub
+      - path: /usr/bin/mosquitto_sub
+  action:
+    Block
+
+# When
+# oc -n mosquitto exec -ti <mosquitto_pod> -- sh -c mosquitto_pub/mosquitto_sub
+#
+# Result:
+# sh: mosquitto_pub/mosquitto_sub: Permission denied
